@@ -1,0 +1,20 @@
+name: Run Daily Parser
+on: [workflow_dispatch] # Позволяет запустить вручную кнопкой
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
+      - name: Run script
+        run: python parser.py # Тут имя твоего файла-скрипта (проверь его!)
+      - name: Upload result
+        uses: actions/upload-artifact@v3
+        with:
+          name: daily-database
+          path: daily_db.js
