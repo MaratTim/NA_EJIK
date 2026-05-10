@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Ежедневник АН</title>
+    <style>
+        :root { --bg: #fff; --txt: #333; --acc: #0066cc; --card: #f5f7fa; --sz: 18px; }
+        [data-theme="dark"] { --bg: #121212; --txt: #e0e0e0; --acc: #4da6ff; --card: #1e1e1e; }
+        [data-theme="sepia"] { --bg: #f4ecd8; --txt: #433422; --acc: #9e5b22; --card: #e9dec5; }
+        body { background: var(--bg); color: var(--txt); font-size: var(--sz); font-family: sans-serif; margin: 0; line-height: 1.6; transition: 0.3s; }
+        header { background: var(--acc); color: white; padding: 15px; display: flex; justify-content: space-between; position: sticky; top: 0; }
+        .content { padding: 20px; max-width: 600px; margin: auto; }
+        .nav { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        button { background: var(--acc); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; }
+        .quote { background: var(--card); border-left: 4px solid var(--acc); padding: 15px; margin: 20px 0; font-style: italic; }
+        .jft { margin-top: 30px; padding-top: 20px; border-top: 2px dashed var(--acc); font-weight: bold; color: var(--acc); }
+        #settings { display: none; position: fixed; bottom: 0; width: 100%; background: var(--bg); padding: 20px; box-shadow: 0 -5px 15px rgba(0,0,0,0.2); box-sizing: border-box; }
+    </style>
+</head>
+<body>
+
+<header>
+    <span id="curDate">9 мая</span>
+    <button onclick="document.getElementById('settings').style.display='block'">⚙️ Настройки</button>
+</header>
+
+<div class="content">
+    <div class="nav">
+        <button onclick="changeDay(-1)">← Назад</button>
+        <button onclick="changeDay(1)">Вперед →</button>
+    </div>
+    <div id="app">
+        <h2 id="title">Загрузка...</h2>
+        <div class="quote" id="quote"></div>
+        <div id="body"></div>
+        <div class="jft" id="jft"></div>
+    </div>
+</div>
+
+<div id="settings">
+    <h3>Настройки</h3>
+    <button onclick="setTheme('light')">Светлая</button>
+    <button onclick="setTheme('sepia')">Сепия</button>
+    <button onclick="setTheme('dark')">Темная</button>
+    <hr>
+    <button onclick="setSize('16px')">Аа</button>
+    <button onclick="setSize('20px')">АА</button>
+    <button onclick="setSize('24px')">АА+</button>
+    <br><br>
+    <button style="width:100%" onclick="document.getElementById('settings').style.display='none'">Закрыть</button>
+</div>
+
+<script>
+let dt = new Date();
+const months = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+
+function render() {
+    let k = `${(dt.getMonth()+1).toString().padStart(2,'0')}-${dt.getDate().toString().padStart(2,'0')}`;
+    document.getElementById('curDate').innerText = dt.getDate() + ' ' + months[dt.getMonth()];
+    let d = window.dailyData ? window.dailyData[k] : null;
+    if(d) {
+        document.getElementById('title').innerText = d.title;
+        document.getElementById('quote').innerText = d.quote;
+        document.getElementById('body').innerHTML = d.body;
+        document.getElementById('jft').innerText = d.jft;
+    } else {
+        document.getElementById('title').innerText = "Текст не найден";
+        document.getElementById('body').innerText = "База данных еще не загружена.";
+    }
+}
+
+function changeDay(o) { dt.setDate(dt.getDate()+o); render(); }
+function setTheme(t) { document.body.setAttribute('data-theme', t); }
+function setSize(s) { document.documentElement.style.setProperty('--sz', s); }
+
+window.onload = render;
+</script>
+
+<script>
+window.dailyData = {
+  "05-09": {
+    "title": "Напиши об этом!",
+    "quote": "«Мы берем тетрадь, садимся, просим о направлении, достаем ручку и начинаем писать».",
+    "body": "<p>Порой, когда нам больно или мы сбиты с толку, наш спонсор предлагает нам «написать об этом»...</p>",
+    "jft": "ТОЛЬКО СЕГОДНЯ: Письменная работа – один из способов выяснить правду."
+  }
+};
+</script>
+</body>
+</html>
